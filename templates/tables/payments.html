@@ -1,0 +1,27 @@
+<table class="table table-bordered table-hover my-2">
+    <thead>
+        <span class="mb-1">
+            Histórico de pagamentos
+        </span>
+        <tr class="thead-dark">
+            <th>ID Transação</th>
+            <th>Nome</th>
+            <th>Forma de pagamento</th>
+            <th>E-mail</th>
+            <th>Valor da compra</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for pagamento in lista_pagamentos %}
+        <tr>
+            <td>{{ pagamento.id }}</td>
+            <td> {{ pagamento.customer.name }} </td>
+            {% if pagamento.payment_method == 'credit_card' %}
+            <td> Cartão de crédito </td>
+            {% endif%}
+            <td> {{ pagamento.customer.email }} </td>
+            <td>R$ {{ pagamento.cost }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

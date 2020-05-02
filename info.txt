@@ -1,0 +1,13 @@
+#############################
+#############################
+### depoleved rof leirbag ### 
+#############################
+#############################
+#
+#
+# Para realizar a instalação das dependencias execute os comandos abaixos
+# pip install requests
+# 
+# Obs: Requisições realizadas utilizando protocolos HTTP devido a falha na utilização da API pagar.me 
+#
+######################################################################################################
