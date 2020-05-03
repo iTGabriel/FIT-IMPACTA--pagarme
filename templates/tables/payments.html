@@ -1,6 +1,6 @@
 <table class="table table-bordered table-hover my-2">
     <thead>
-        <span class="mb-1">
+        <span class="mb-2">
             Histórico de pagamentos
         </span>
         <tr class="thead-dark">
@@ -15,12 +15,10 @@
         {% for pagamento in lista_pagamentos %}
         <tr>
             <td>{{ pagamento.id }}</td>
-            <td> {{ pagamento.customer.name }} </td>
-            {% if pagamento.payment_method == 'credit_card' %}
-            <td> Cartão de crédito </td>
-            {% endif%}
-            <td> {{ pagamento.customer.email }} </td>
-            <td>R$ {{ pagamento.cost }}</td>
+            <td> {{ pagamento.name }} </td>
+            <td> {{ pagamento.pagamento }} </td>
+            <td> {{ pagamento.email }} </td>
+            <td>R$ {{ pagamento.preco }}</td>
         </tr>
         {% endfor %}
     </tbody>
