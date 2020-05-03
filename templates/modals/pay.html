@@ -1,84 +1,105 @@
 <!-- Modal -->
+<style>
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {-webkit-appearance: none; margin: 0;}
+
+    input[type=number] {-moz-appearance: textfield;}
+</style>
+
 <div class="modal fade" id="pagamento_modal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
     aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
 
             <div class="modal-header justify-content-center">
-                <h5 class="modal-title">Fomulário - Pagamento</h5>
-                <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button> -->
+                <h5 class="modal-title">Puppy - Pagamento</h5>
             </div>
             <div class="modal-body">
 
-                <form action="" class="text-left">
+                <form action="{{ url_for('pagamento')}}" method="POST" class="text-left">
 
                     <!-- Input Nome -->
                     <div class="form-group">
-                        <label for="name">Nome</label>
-                        <input type="text" name="name" id="name" class="form-control" placeholder="Seu nome">
+                        <label for="nome">Nome</label>
+                        <input required type="text" name="nome" id="nome" class="form-control" placeholder="Seu nome">
                     </div>
 
                     <!-- Input Type -->
                     <!-- Input Country -->
                     <!-- Input Incrementar o tipo individual e não corporativo na rota de POST  -->
 
+                    <!-- Input Tel/Celular -->
+                    <div class="form-group">
+                        <label for="numero_contato">Telefone para contato</label>
+                        <input required type="text" name="numero_contato" id="numero_contato" class="form-control" placeholder="Número para contato">
+                    </div>
 
                     <!-- Input Email -->
                     <div class="form-group">
                         <label for="email">Email</label>
-                        <input type="text" name="email" id="email" class="form-control"
-                            placeholder="E-mail para contato">
+                        <input required type="email" name="email" id="email" class="form-control" placeholder="E-mail para contato">
                     </div>
 
                     <!-- Input CPF -->
                     <div class="form-group">
                         <label for="cpf">CPF</label>
-                        <input type="text" name="cpf" id="cpf" class="form-control" placeholder="Digite seu CPF">
+                        <input required type="text" name="cpf" id="cpf" class="form-control" placeholder="Digite seu CPF">
                     </div>
-                    
-                    <!-- Input Nº Cartão -->
+
+
+                    <!-- Escolha dos items de compra -->
+                    <div class="form-group">
+                        <label for="">Opção de compra</label>
+                        <select class="form-control" name="item_compra">
+                            <option value="Banho valor=40">Banho = R$ 40</option>
+                            <option value="Tosa valor=30">Tosa = R$ 30</option>
+                            <option value="Banho + tosa valor=55">Banho + Tosas = R$ 55</option>
+                        </select>
+                    </div>
+
+                    <!-- Abas da forma de pagamento "credito/débito/boleto" -->
                     <span>Forma de pagamento</span>
-                    
                     <ul class="nav nav-tabs mt-3" id="pagamento" role="tablist">
                         <li class="nav-item">
-                            <a class="nav-link active" id="credito-tab" data-toggle="tab" href="#credito" role="tab" aria-controls="credito" aria-selected="true">Crédito</a>
+                            <a class="nav-link active" id="credito-tab" data-toggle="tab" href="#tab_credito" role="tab" aria-controls="credito" aria-selected="true">Crédito</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" id="debito-tab" data-toggle="tab" href="#debito" role="tab" aria-controls="debito" aria-selected="false">Débito</a>
+                            <a class="nav-link" id="debito-tab" data-toggle="tab" href="#tab_debito" role="tab" aria-controls="debito" aria-selected="false">Débito</a>
                         </li>
                     </ul>
+
                     <div class="tab-content" id="pagamentoContent">
-                        <div class="tab-pane fade show active" id="credito" role="tabpanel" aria-labelledby="credito-tab">
+                        <div class="tab-pane fade show active" id="tab_credito" role="tabpanel"
+                            aria-labelledby="credito-tab">
                             <!-- Input Credito -->
                             <div class="form-group">
-                                <input type="text" name="credito" id="credito" class="form-control" placeholder="Digite o número de seu cartão de crédito">
+                                <!-- Input dados do Cartão -->
+                                    <input oninput="check_input()" type="number" name="credito" id="input_credito" class="form-control" placeholder="Digite o número de seu cartão de crédito">
+                                    <input oninput="check_input()" type="number" class="form-control" name="credito_cvv" id="input_credito_cvv" placeholder='Digite código de verificação do cartão "CVV"' >
+                                    <input oninput="check_input()" type="text" class="form-control" name="credito_input_credito_titular" id="input_credito_titular" placeholder="Digite o nome do titular que consta na frente do cartão" >
+                                    <label for="input_credito_data_expiracao">Data de expiração do cartão</label>
+                                    <input oninput="check_input()" type="date" class="form-control" name="credito_data_expiracao" id="input_credito_data_expiracao" >
                             </div>
-                            
                         </div>
-                        <div class="tab-pane fade" id="debito" role="tabpanel" aria-labelledby="debito-tab">
-                            
+
+                        <div class="tab-pane fade" id="tab_debito" role="tabpanel" aria-labelledby="debito-tab">
                             <!-- Input Débito -->
                             <div class="form-group">
-                                <input type="text" name="debito" id="debito" class="form-control" placeholder="Digite o número de seu cartão de débito">
+                                <!-- Input Nº Cartão -->
+                                <input oninput="check_input()" type="text" name="debito" id="input_debito" class="form-control" placeholder="Digite o número de seu cartão de débito">
                             </div>
                         </div>
                     </div>
                     
-
-
-
+                    <div class="modal-footer justify-content-center">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button  type="submit" class="btn btn-primary">Pagar</button>
+                    </div>
                 </form>
 
 
-
             </div>
 
-            <div class="modal-footer justify-content-center">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary">Pagar</button>
-            </div>
 
         </div>
     </div>
