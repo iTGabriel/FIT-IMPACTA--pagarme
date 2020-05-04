@@ -28,10 +28,10 @@
                     <!-- Input Country -->
                     <!-- Input Incrementar o tipo individual e não corporativo na rota de POST  -->
 
-                    <!-- Input Tel/Celular -->
+                    <!-- Input Tel/Celular --> 
                     <div class="form-group">
                         <label for="numero_contato">Telefone para contato</label>
-                        <input required type="text" name="numero_contato" id="numero_contato" class="form-control" placeholder="Número para contato">
+                        <input type="number" name="numero_contato" id="numero_contato" class="form-control" placeholder="Digite o ddd e número para contato sem espaço e hífen(-)">
                     </div>
 
                     <!-- Input Email -->
@@ -43,7 +43,7 @@
                     <!-- Input CPF -->
                     <div class="form-group">
                         <label for="cpf">CPF</label>
-                        <input required type="text" name="cpf" id="cpf" class="form-control" placeholder="Digite seu CPF">
+                        <input required pattern="[0-9]{11}" type="text" name="cpf" id="cpf" class="form-control" placeholder="Digite seu CPF sem espaços e hífen(-)">
                     </div>
 
 
@@ -72,21 +72,21 @@
                         <div class="tab-pane fade show active" id="tab_credito" role="tabpanel"
                             aria-labelledby="credito-tab">
                             <!-- Input Credito -->
-                            <div class="form-group">
+                            <!-- <div class="form-group"> -->
                                 <!-- Input dados do Cartão -->
-                                    <input oninput="check_input()" type="number" name="credito" id="input_credito" class="form-control" placeholder="Digite o número de seu cartão de crédito">
-                                    <input oninput="check_input()" type="number" class="form-control" name="credito_cvv" id="input_credito_cvv" placeholder='Digite código de verificação do cartão "CVV"' >
-                                    <input oninput="check_input()" type="text" class="form-control" name="credito_input_credito_titular" id="input_credito_titular" placeholder="Digite o nome do titular que consta na frente do cartão" >
+                                    <input required  min="16"  type="number" name="credito" id="input_credito" class="form-control" placeholder="Digite o número de seu cartão de crédito sem espaço" oninput="check_input()">
+                                    <input  min="3" type="number" class="form-control" name="credito_cvv" id="input_credito_cvv" placeholder='Digite código de verificação do cartão "CVV"' oninput="check_input()">
+                                    <input  type="text" class="form-control" name="credito_input_credito_titular" id="input_credito_titular" placeholder="Digite o nome do titular que consta na frente do cartão" oninput="check_input()">
                                     <label for="input_credito_data_expiracao">Data de expiração do cartão</label>
-                                    <input oninput="check_input()" type="date" class="form-control" name="credito_data_expiracao" id="input_credito_data_expiracao" >
-                            </div>
+                                    <input  min="2020-05-15" max="2030-12-31" type="date" class="form-control" name="credito_data_expiracao" id="input_credito_data_expiracao" oninput="check_input()">
+                            <!-- </div> -->
                         </div>
 
                         <div class="tab-pane fade" id="tab_debito" role="tabpanel" aria-labelledby="debito-tab">
                             <!-- Input Débito -->
                             <div class="form-group">
                                 <!-- Input Nº Cartão -->
-                                <input oninput="check_input()" type="text" name="debito" id="input_debito" class="form-control" placeholder="Digite o número de seu cartão de débito">
+                                <input oninput="check_input()" minlength="16" maxlength="16" type="number" name="debito" id="input_debito" class="form-control" placeholder="Digite o número de seu cartão de débito sem espaço">
                             </div>
                         </div>
                     </div>

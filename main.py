@@ -36,7 +36,13 @@ def index():
 def pagamento():
     dados_pagamento = {}
 
-    
+    print(request.form['cpf'])
+
+    if request.form['numero_contato'] and len(request.form['numero_contato']) in [10, 12]:
+        telefone = request.form['numero_contato']
+    else:
+        telefone = "1100000000"
+
 
     dados_pagamento['customer'] = { 
         'external_id' : "1",
@@ -48,7 +54,7 @@ def pagamento():
             "type": "cpf",
             "number": request.form['cpf']
         }],
-        "phone_numbers": ["+55"+request.form['numero_contato']],
+        "phone_numbers": ["+55"+telefone],
         "birthday": "1965-01-01"
     }
 
@@ -70,7 +76,7 @@ def pagamento():
     dados_pagamento['items'] = [{
             "id": "1",
             "title": array_itemCompra[0],
-            "unit_price": array_itemCompra[1],
+            "unit_price": array_itemCompra[1]+"00",
             "quantity": "1",
             "tangible": True
     }]
@@ -91,11 +97,6 @@ def pagamento():
         print("Pagamento feito")
     except:
         print("Não foi possível capturar dados do cartão")
-
-    # print(f"\n\nJSON //\n\n {dados_pagamento}")
-
-
-    # print(dados_pagamento)
 
     return render_template('index.html')
 
