@@ -1,14 +1,15 @@
 import requests
 
-chave_api = "SUA CHAVE API_KEY PAGARME"
+chave_api = "SUA CHAVE API PAGARME"
 
 
 def realizar_transicao(dados):
   dados['api_key'] = chave_api
 
-  return dados
-  # r = requests.post('https://api.pagar.me/1/transactions', json=dados)
-  # return r
+  # return dados
+  r = requests.post('https://api.pagar.me/1/transactions', json=dados)
+  print(r.json())
+  return r
 
 def busca_todas_transacao():
   r = requests.get('https://api.pagar.me/1/payables', json = {"api_key": chave_api})

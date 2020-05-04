@@ -35,12 +35,8 @@ def index():
 @app.route('/pay', methods=['POST'])
 def pagamento():
     dados_pagamento = {}
-    # dados_pagamento['amount'] = 
-    if request.form['credito']:
-        dados_pagamento['card_number'] = request.form['credito']
-        dados_pagamento['card_cvv'] = request.form['credito_cvv']
-        dados_pagamento['card_holder_name'] = request.form['credito_input_credito_titular']
-        dados_pagamento['card_expiration_date'] = request.form['credito_data_expiracao']
+
+    
 
     dados_pagamento['customer'] = { 
         'external_id' : "1",
@@ -52,6 +48,7 @@ def pagamento():
             "type": "cpf",
             "number": request.form['cpf']
         }],
+        "phone_numbers": ["+55"+request.form['numero_contato']],
         "birthday": "1965-01-01"
     }
 
@@ -68,16 +65,37 @@ def pagamento():
         }
     }
 
-    dados_pagamento['items'] = {
+    array_itemCompra = request.form['item_compra'].split('valor=')
+    dados_pagamento['amount'] = array_itemCompra[1]+"00"
+    dados_pagamento['items'] = [{
             "id": "1",
-            "title": request.form['item_compra'].split('valor=')[0],
-            "unit_price": request.form['item_compra'].split('valor=')[1],
+            "title": array_itemCompra[0],
+            "unit_price": array_itemCompra[1],
             "quantity": "1",
             "tangible": True
-    }
+    }]
+
+    try:
+        if request.form['credito']:
+            # dados_pagamento['card_id'] = 1
+            dados_pagamento['card_number'] = request.form['credito']
+            dados_pagamento['card_cvv'] = request.form['credito_cvv']
+            dados_pagamento['card_holder_name'] = request.form['credito_input_credito_titular']
+
+            data_tratada = request.form['credito_data_expiracao'].split('-') 
+            dados_pagamento['card_expiration_date'] = data_tratada[1]+""+data_tratada[0]
+
+        # if request.form['debito']:
+
+        api_pagarme.realizar_transicao(dados_pagamento)
+        print("Pagamento feito")
+    except:
+        print("Não foi possível capturar dados do cartão")
+
+    # print(f"\n\nJSON //\n\n {dados_pagamento}")
 
 
-    print(dados_pagamento)
+    # print(dados_pagamento)
 
     return render_template('index.html')
 
