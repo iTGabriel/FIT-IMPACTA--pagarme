@@ -1,0 +1,45 @@
+<!-- Modal -->
+<style>
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {-webkit-appearance: none; margin: 0;}
+
+    input[type=number] {-moz-appearance: textfield;}
+</style>
+
+<div class="modal fade" id="estorno_modal" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+
+            <div class="modal-header justify-content-center">
+                <h5 class="modal-title">Puppy - Estorno</h5>
+            </div>
+            <div class="modal-body">
+
+                <form action="{{ url_for('estorno')}}" method="POST" class="text-left">
+
+                    <!-- Input Nome -->
+                    <div class="form-group">
+                        <label for="estorno_id">ID do pagamento</label>
+                        <input required type="text" name="estorno_id" id="estorno_id" class="form-control" placeholder="ID do pagamento para ser realizado o estorno">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="estorno_valor">Valor do estorno</label>
+                        <input required type="text" name="estorno_valor" id="estorno_valor" class="form-control" placeholder="Valor desejado para o estorno da transação">
+                    </div>
+
+                    
+                    <div class="modal-footer justify-content-center">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button  type="submit" class="btn btn-primary">Pagar</button>
+                    </div>
+                </form>
+
+
+            </div>
+
+
+        </div>
+    </div>
+</div>

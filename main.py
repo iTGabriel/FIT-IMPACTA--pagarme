@@ -17,45 +17,56 @@ def index():
         pagamentos = api_pagarme.busca_todas_transacao()[0].json()
         
         verificador_id = []
+        valor_total = 0
+        total = 0
         for pagamento in pagamentos: 
             transicao = {}
             dados_transacao = api_pagarme.busca_id_transacao(pagamento['transaction_id'])[0].json()
             transicao['id'] = dados_transacao['tid']
 
-            if dados_transacao['tid'] not in verificador_id:
-                verificador_id.append(dados_transacao['tid'])
+            if dados_transacao['status'] != "refunded":
 
-                if  len(str(dados_transacao['amount'])) > 3:
-                    transicao['preco'] = str(dados_transacao['amount'])[:-2]+",00"
-                else:
-                    transicao['preco'] = str(dados_transacao['amount'])+",00"
+                if dados_transacao['tid'] not in verificador_id:
+                    verificador_id.append(dados_transacao['tid'])
 
-                transicao['name'] = dados_transacao['customer']['name']
-                transicao['email'] = dados_transacao['customer']['email']
-                
-                if dados_transacao['payment_method'] == 'credit_card':
-                    transicao['pagamento'] = 'Cartão de crédito'
-                    transicao['parcelas'] = pagamento['installment']
-                else:
-                    transicao['pagamento'] = 'Boleto'
+                    valor_total += dados_transacao['amount']
+                    if  len(str(dados_transacao['amount'])) > 3:
+                        transicao['preco'] = str(dados_transacao['amount'])[:-2]+",00"
+                    else:
+                        transicao['preco'] = str(dados_transacao['amount'])+",00"
 
-                lista_pagamentos.append(transicao)
+                    transicao['name'] = dados_transacao['customer']['name']
+                    transicao['email'] = dados_transacao['customer']['email']
+                    
+                    if dados_transacao['payment_method'] == 'credit_card':
+                        transicao['pagamento'] = 'Cartão de crédito'
+                        transicao['parcelas'] = pagamento['installment']
+                    else:
+                        transicao['pagamento'] = 'Boleto'
+
+                    lista_pagamentos.append(transicao)
     except:
         lista_pagamentos = []
+
+    for pagamento_preco in lista_pagamentos:
+        total += int(pagamento_preco['preco'][:-3]+"00")
+
+    total = str(total)[:-2]+",00"
+
+    valor_total = str(valor_total)[:-2]+",00"
     
-    return render_template('index.html', lista_pagamentos = lista_pagamentos, message=message)
+    return render_template('index.html', lista_pagamentos = lista_pagamentos, valor_total=total, message=message)
+
 
 
 @app.route('/pay', methods=['POST'])
 def pagamento():
     dados_pagamento = {}
 
-
     if request.form['numero_contato'] and len(request.form['numero_contato']) in [10, 12]:
         telefone = request.form['numero_contato']
     else:
         telefone = "1100000000"
-
     
     dados_pagamento['customer'] = { 
         'external_id' : "1",
@@ -66,7 +77,6 @@ def pagamento():
         "documents": [{
             "type": "cpf",
             "number": request.form['cpf']
-            # "number": '30621143049'
         }],
         "phone_numbers": ["+55"+telefone],
         "birthday": "1965-01-01"
@@ -121,6 +131,26 @@ def pagamento():
     return redirect(url_for('index', message=message))
 
 
+@app.route('/estorno', methods=['POST'])
+def estorno():
+
+    dados_estorno = {}
+
+    try:
+        dados_estorno['transaction_id'] = request.form['estorno_id']
+        dados_estorno['amount'] = request.form['estorno_valor']
+
+        estorno = api_pagarme.realizar_estorno(dados_estorno)
+
+        if estorno[1] == 400:
+            message = "Falha em realizar o estorn || "+ pagamento[0].json()['errors'][0]['message']
+        if estorno[1] == 200:
+            message = "Sucesso em realizar o estorno"
+
+    except:
+        message = "Não foi possível realizar o processo de estorno"
+
+    return redirect(url_for('index', message=message))
 
 
-app.run('127.0.0.1', 8000 )
+app.run('127.0.0.1', 8000)

@@ -5,15 +5,15 @@
         </span>
 
         {% if message %}
-        {% if message[:1] == 'F' %}
-        <div class="alert alert-danger" role="alert">
-            <strong>{{ message }}</strong>
-        </div>
-        {% elif message[:1] == 'S' %}
-        <div class="alert alert-success" role="alert">
-            <strong>{{ message }}</strong>
-        </div>
-        {% endif %}
+            {% if message[:1] in ['F', 'N'] %}
+            <div class="alert alert-danger" role="alert">
+                <strong>{{ message }}</strong>
+            </div>
+            {% elif message[:1] == 'S' %}
+            <div class="alert alert-success" role="alert">
+                <strong>{{ message }}</strong>
+            </div>
+            {% endif %}
         {% endif %}
 
 
@@ -24,27 +24,33 @@
             <th>Forma de pagamento</th>
             <th>E-mail</th>
             <th>Valor da compra</th>
-            <th>Total parcelas</th>
+            <th>Total parcelado</th>
         </tr>
     </thead>
     <tbody>
         {% if lista_pagamentos %}
-        {% for pagamento in lista_pagamentos %}
-        <tr>
-            <td>{{ pagamento.id }}</td>
-            <td> {{ pagamento.name }} </td>
-            <td> {{ pagamento.pagamento }} </td>
-            <td> {{ pagamento.email }} </td>
-            <td>R$ {{ pagamento.preco }}</td>
+            {% for pagamento in lista_pagamentos %}
+            <tr>
+                <td>{{ pagamento.id }}</td>
+                <td> {{ pagamento.name }} </td>
+                <td> {{ pagamento.pagamento }} </td>
+                <td> {{ pagamento.email }} </td>
+                <td>R$ {{ pagamento.preco }}</td>
 
-            {% if pagamento.parcelas %}
+                {% if pagamento.parcelas %}
 
-            <td>{{ pagamento.parcelas }}</td>
-            {% else %}
-            <td> 0 </td>
-            {% endif %}
-        </tr>
-        {% endfor %}
+                <td>{{ pagamento.parcelas }}</td>
+                {% else %}
+                <td> 0 </td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+            <tr class="bg-dark" style="color: white;">
+                <td>Faturamento total</td>
+                <td colspan="3"></td>
+                <td>R$ {{valor_total}}</td>
+                <td></td>
+            </tr>
         {% else %}
         <tr>
             <td colspan="6">

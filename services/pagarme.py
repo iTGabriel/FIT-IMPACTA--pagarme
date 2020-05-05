@@ -21,3 +21,9 @@ def busca_id_transacao(id):
 def saldo(dados):
   r = requests.get('https://api.pagar.me/1/balance', json = {"api_key": chave_api})
   return [r, r.status_code]
+
+def realizar_estorno(dados):
+  dados['api_key'] = chave_api
+  r = requests.post('https://api.pagar.me/1/transactions/'+dados['transaction_id']+'/refund', json=dados)
+  r.headers['x-test'] = 'true'
+  return [r, r.status_code]

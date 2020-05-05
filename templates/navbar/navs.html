@@ -1,15 +1,15 @@
 <nav>
 
   <ul class="nav justify-content-center border my-4">
-    <a class="nav-link active" href="#">Home</a>
+    <a class="nav-link active" href="{{url_for('index')}}">Home</a>
 
     <li class="nav-item">
       <a class="nav-link active dropdown-toggle" data-toggle="dropdown" href="#">Opções de pagamento</a>
       <div class="dropdown-menu">
-        <a class="nav-link  " href="#" data-toggle="modal" data-target="#pagamento_modal">Pagamento</a>
-        <a class="nav-link disabled" href="#">Estorno</a>
+        <a class="nav-link" href="#" data-toggle="modal" data-target="#pagamento_modal">Pagamento</a>
+        <a class="nav-link" href="#" data-toggle="modal" data-target="#estorno_modal">Estorno</a>
       </div>
     </li>
 
   </ul>
-</nav>
+</nav>  
