@@ -51,9 +51,9 @@
                     <div class="form-group">
                         <label for="">Opção de compra</label>
                         <select class="form-control" name="item_compra">
-                            <option value="Banho valor=40">Banho = R$ 40</option>
-                            <option value="Tosa valor=30">Tosa = R$ 30</option>
-                            <option value="Banho + tosa valor=55">Banho + Tosas = R$ 55</option>
+                            <option value="Banho valor=4000">Banho = R$ 40</option>
+                            <option value="Tosa valor=3000">Tosa = R$ 30</option>
+                            <option value="Banho + tosa valor=5500">Banho + Tosas = R$ 55</option>
                         </select>
                     </div>
 
@@ -77,7 +77,19 @@
                                     <input required  min="16"  type="number" name="credito" id="input_credito" class="form-control" placeholder="Digite o número de seu cartão de crédito sem espaço" oninput="check_input()">
                                     <input  min="3" type="number" class="form-control" name="credito_cvv" id="input_credito_cvv" placeholder='Digite código de verificação do cartão "CVV"' oninput="check_input()">
                                     <input  type="text" class="form-control" name="credito_input_credito_titular" id="input_credito_titular" placeholder="Digite o nome do titular que consta na frente do cartão" oninput="check_input()">
-                                    <label for="input_credito_data_expiracao">Data de expiração do cartão</label>
+                                    
+                                    <div class="form-group mt-1">
+                                        <label for="">Opção de parcelamento</label>
+                                        <select class="form-control" name="credito_parcela">
+                                            <option value="1">1x Vez</option>
+                                            <option value="2">2x Vez</option>
+                                            <option value="3">3x Vez</option>
+                                            <option value="4">4x Vez</option>
+                                            <option value="5">5x Vez</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <label for="input_credito_data_expiracao mt-1">Data de expiração do cartão</label>
                                     <input  min="2020-05-15" max="2030-12-31" type="date" class="form-control" name="credito_data_expiracao" id="input_credito_data_expiracao" oninput="check_input()">
                             <!-- </div> -->
                         </div>

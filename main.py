@@ -6,44 +6,57 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    lista_pagamentos = []
-    pagamentos = api_pagarme.busca_todas_transacao().json()
     
-    for pagamento in pagamentos: 
-        transicao = {}
-        dados_transacao = api_pagarme.busca_id_transacao(pagamento['transaction_id']).json()
-        transicao['id'] = dados_transacao['tid']
-        
-        if  len(str(dados_transacao['amount'])) > 3:
-            transicao['preco'] = str(dados_transacao['amount'])[:-2]+",00"
-        else:
-            transicao['preco'] = str(dados_transacao['amount'])+",00"
+    if request.args.get('message'):
+        message = request.args.get('message')
+    else:
+        message = None
 
-        transicao['name'] = dados_transacao['customer']['name']
-        transicao['email'] = dados_transacao['customer']['email']
+    try:
+        lista_pagamentos = []
+        pagamentos = api_pagarme.busca_todas_transacao()[0].json()
         
-        if dados_transacao['payment_method'] == 'credit_card':
-            transicao['pagamento'] = 'Cartão de crédito'
-        else:
-            transicao['pagamento'] = 'Boleto'
+        verificador_id = []
+        for pagamento in pagamentos: 
+            transicao = {}
+            dados_transacao = api_pagarme.busca_id_transacao(pagamento['transaction_id'])[0].json()
+            transicao['id'] = dados_transacao['tid']
 
-        lista_pagamentos.append(transicao)
+            if dados_transacao['tid'] not in verificador_id:
+                verificador_id.append(dados_transacao['tid'])
+
+                if  len(str(dados_transacao['amount'])) > 3:
+                    transicao['preco'] = str(dados_transacao['amount'])[:-2]+",00"
+                else:
+                    transicao['preco'] = str(dados_transacao['amount'])+",00"
+
+                transicao['name'] = dados_transacao['customer']['name']
+                transicao['email'] = dados_transacao['customer']['email']
+                
+                if dados_transacao['payment_method'] == 'credit_card':
+                    transicao['pagamento'] = 'Cartão de crédito'
+                    transicao['parcelas'] = pagamento['installment']
+                else:
+                    transicao['pagamento'] = 'Boleto'
+
+                lista_pagamentos.append(transicao)
+    except:
+        lista_pagamentos = []
     
-    return render_template('index.html', lista_pagamentos = lista_pagamentos)
+    return render_template('index.html', lista_pagamentos = lista_pagamentos, message=message)
 
 
 @app.route('/pay', methods=['POST'])
 def pagamento():
     dados_pagamento = {}
 
-    print(request.form['cpf'])
 
     if request.form['numero_contato'] and len(request.form['numero_contato']) in [10, 12]:
         telefone = request.form['numero_contato']
     else:
         telefone = "1100000000"
 
-
+    
     dados_pagamento['customer'] = { 
         'external_id' : "1",
         'name' : request.form['nome'],
@@ -53,6 +66,7 @@ def pagamento():
         "documents": [{
             "type": "cpf",
             "number": request.form['cpf']
+            # "number": '30621143049'
         }],
         "phone_numbers": ["+55"+telefone],
         "birthday": "1965-01-01"
@@ -72,11 +86,11 @@ def pagamento():
     }
 
     array_itemCompra = request.form['item_compra'].split('valor=')
-    dados_pagamento['amount'] = array_itemCompra[1]+"00"
+    dados_pagamento['amount'] = array_itemCompra[1]
     dados_pagamento['items'] = [{
             "id": "1",
             "title": array_itemCompra[0],
-            "unit_price": array_itemCompra[1]+"00",
+            "unit_price": array_itemCompra[1],
             "quantity": "1",
             "tangible": True
     }]
@@ -88,17 +102,24 @@ def pagamento():
             dados_pagamento['card_cvv'] = request.form['credito_cvv']
             dados_pagamento['card_holder_name'] = request.form['credito_input_credito_titular']
 
+            dados_pagamento['installments'] = request.form['credito_parcela']
+
             data_tratada = request.form['credito_data_expiracao'].split('-') 
             dados_pagamento['card_expiration_date'] = data_tratada[1]+""+data_tratada[0]
 
         # if request.form['debito']:
 
-        api_pagarme.realizar_transicao(dados_pagamento)
-        print("Pagamento feito")
+        pagamento = api_pagarme.realizar_transicao(dados_pagamento)
+        
+        if pagamento[1] == 400:
+            message = "Falha em realizar pagamento || "+ pagamento[0].json()['errors'][0]['message']
+        if pagamento[1] == 200:
+            message = "Sucesso em realizar pagamento"
     except:
-        print("Não foi possível capturar dados do cartão")
+        message = "Não foi possível capturar dados do cartão"
 
-    return render_template('index.html')
+    return redirect(url_for('index', message=message))
+
 
 
 
