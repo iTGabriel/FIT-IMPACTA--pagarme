@@ -10,4 +10,11 @@
 # 
 # Obs: Requisições realizadas utilizando protocolos HTTP devido a falha na utilização da API pagar.me 
 #
+# Conforme os link's abaixo, a plataforma PAGARME não utiliza metodo de pagamento em débito(link 1).
+# A mesma em ambiente de desenvolvimento se limita nas seguintes bandeiras:
+# "Em transações do tipo emv são aceitas somente: Visa, Mastercard, American Express, Elo e Hipercard."
+#
+# https://pagarme.zendesk.com/hc/pt-br/articles/204765719-Por-que-n%C3%A3o-trabalham-com-d%C3%A9bito-
+# https://pagarme.zendesk.com/hc/pt-br/articles/204766289-Quais-bandeiras-de-cart%C3%A3o-de-cr%C3%A9dito-o-Pagar-me-aceita-
+#
 ######################################################################################################
