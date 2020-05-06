@@ -4,20 +4,22 @@ import services.pagarme as api_pagarme
 
 app = Flask(__name__)
 
+# Rota principal, utilizada para buscar os históricos de cada compra e exibilo na tabela da página
 @app.route('/')
 def index():
     
+    # Verifica se no request tem o parametro 'message'(recebido só quando é feito pagamento ou estorno, é enviado mensagem de sucesso ou falha)
     if request.args.get('message'):
         message = request.args.get('message')
     else:
         message = None
 
+    # Iniciamos com uma lista vazia, pegamos todos registro/histórico contido na chave API_KEY da plataforma pagarme, pegamos o ID de transição, realizamos a busca deste id, facilitamos o preenchimendo salvandos os dados e um json com as chaves propriamente criadas e guardando valor em cada. Assim facilitando na hora da utilização por parte do front-end
     try:
         lista_pagamentos = []
         pagamentos = api_pagarme.busca_todas_transacao()[0].json()
         
         verificador_id = []
-        valor_total = 0
         total = 0
         for pagamento in pagamentos: 
             transicao = {}
@@ -29,7 +31,7 @@ def index():
                 if dados_transacao['tid'] not in verificador_id:
                     verificador_id.append(dados_transacao['tid'])
 
-                    valor_total += dados_transacao['amount']
+                    # Tratamento do valor para que fique padrão BR
                     if  len(str(dados_transacao['amount'])) > 3:
                         transicao['preco'] = str(dados_transacao['amount'])[:-2]+",00"
                     else:
@@ -51,9 +53,8 @@ def index():
     for pagamento_preco in lista_pagamentos:
         total += int(pagamento_preco['preco'][:-3]+"00")
 
+    # Tratamento do valor para que fique padrão BR
     total = str(total)[:-2]+",00"
-
-    valor_total = str(valor_total)[:-2]+",00"
     
     return render_template('index.html', lista_pagamentos = lista_pagamentos, valor_total=total, message=message)
 

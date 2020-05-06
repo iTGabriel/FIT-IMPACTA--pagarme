@@ -3,7 +3,6 @@ import requests
 chave_api = "SUA CHAVE API PAGARME"
 
 
-
 def realizar_transicao(dados):
   dados['api_key'] = chave_api
   r = requests.post('https://api.pagar.me/1/transactions', json=dados)
