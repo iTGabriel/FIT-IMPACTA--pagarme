@@ -4,23 +4,19 @@ import services.pagarme as api_pagarme
 
 app = Flask(__name__)
 
-# Rota principal, utilizada para buscar os históricos de cada compra e exibilo na tabela da página
 @app.route('/')
 def index():
     
-    # Verifica se no request tem o parametro 'message'(recebido só quando é feito pagamento ou estorno, é enviado mensagem de sucesso ou falha)
     if request.args.get('message'):
         message = request.args.get('message')
     else:
         message = None
 
-    # Iniciamos com uma lista vazia, pegamos todos registro/histórico contido na chave API_KEY da plataforma pagarme, pegamos o ID de transição, realizamos a busca deste id, facilitamos o preenchimendo salvandos os dados e um json com as chaves propriamente criadas e guardando valor em cada. Assim facilitando na hora da utilização por parte do front-end
     try:
         lista_pagamentos = []
         pagamentos = api_pagarme.busca_todas_transacao()[0].json()
         
         verificador_id = []
-        total = 0
         for pagamento in pagamentos: 
             transicao = {}
             dados_transacao = api_pagarme.busca_id_transacao(pagamento['transaction_id'])[0].json()
@@ -43,13 +39,13 @@ def index():
                     if dados_transacao['payment_method'] == 'credit_card':
                         transicao['pagamento'] = 'Cartão de crédito'
                         transicao['parcelas'] = pagamento['installment']
-                    else:
-                        transicao['pagamento'] = 'Boleto'
 
                     lista_pagamentos.append(transicao)
     except:
         lista_pagamentos = []
+        message = "L"
 
+    total = 0
     for pagamento_preco in lista_pagamentos:
         total += int(pagamento_preco['preco'][:-3]+"00")
 
@@ -108,7 +104,6 @@ def pagamento():
 
     try:
         if request.form['credito']:
-            # dados_pagamento['card_id'] = 1
             dados_pagamento['card_number'] = request.form['credito']
             dados_pagamento['card_cvv'] = request.form['credito_cvv']
             dados_pagamento['card_holder_name'] = request.form['credito_input_credito_titular']
@@ -118,7 +113,6 @@ def pagamento():
             data_tratada = request.form['credito_data_expiracao'].split('-') 
             dados_pagamento['card_expiration_date'] = data_tratada[1]+""+data_tratada[0]
 
-        # if request.form['debito']:
 
         pagamento = api_pagarme.realizar_transicao(dados_pagamento)
         
@@ -139,7 +133,7 @@ def estorno():
 
     try:
         dados_estorno['transaction_id'] = request.form['estorno_id']
-        dados_estorno['amount'] = request.form['estorno_valor']
+        dados_estorno['amount'] = int(str(request.form['estorno_valor'])+"00")
 
         estorno = api_pagarme.realizar_estorno(dados_estorno)
 
